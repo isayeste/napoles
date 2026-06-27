@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nápoles en 4 días · Elena, Isa & Kevin</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #fff;
+    color: #1a1a18;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .hero {
+    padding: 80px 2rem 60px;
+    max-width: 780px;
+    margin: 0 auto;
+    border-bottom: 1px solid #ebebea;
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 1.2rem;
+    font-weight: 500;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    font-weight: 400;
+    line-height: 1.08;
+    color: #1a1a18;
+    margin-bottom: 1.4rem;
+  }
+  .hero-title em { font-style: italic; color: #c0392b; }
+  .hero-desc {
+    font-size: 1rem;
+    color: #666;
+    font-weight: 300;
+    max-width: 560px;
+    line-height: 1.75;
+    margin-bottom: 2rem;
+  }
+  .personas {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+  .persona {
+    background: #f7f6f3;
+    border: 1px solid #e8e6e0;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.82rem;
+    flex: 1;
+    min-width: 160px;
+  }
+  .persona-name { font-weight: 500; color: #1a1a18; margin-bottom: 2px; }
+  .persona-from { color: #888; font-size: 0.75rem; }
+  .persona-vibe { color: #666; margin-top: 4px; font-size: 0.78rem; font-style: italic; }
+
+  .quick-facts { display: flex; gap: 2rem; flex-wrap: wrap; }
+  .fact { font-size: 0.82rem; color: #888; }
+  .fact strong { display: block; font-size: 0.9rem; color: #1a1a18; font-weight: 500; margin-bottom: 1px; }
+
+  .nav-days {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    border-bottom: 1px solid #ebebea;
+    z-index: 50;
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .nav-btn {
+    padding: 1rem 1.3rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    color: #aaa;
+    cursor: pointer;
+    border: none;
+    background: none;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    transition: color 0.15s, border-color 0.15s;
+    text-transform: uppercase;
+  }
+  .nav-btn:hover { color: #1a1a18; }
+  .nav-btn.active { color: #1a1a18; border-bottom-color: #c0392b; }
+
+  .day { display: none; max-width: 780px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+  .day.active { display: block; }
+
+  .day-header { margin-bottom: 2.5rem; }
+  .day-num {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #c0392b;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  .day-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+  }
+  .day-summary {
+    font-size: 0.95rem;
+    color: #666;
+    font-weight: 300;
+    line-height: 1.7;
+    max-width: 560px;
+  }
+  .day-img {
+    width: 100%;
+    height: 340px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 2.5rem;
+    display: block;
+  }
+
+  .stops { display: flex; flex-direction: column; }
+  .stop {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 0 1.5rem;
+    padding: 1.75rem 0;
+    border-bottom: 1px solid #ebebea;
+  }
+  .stop:last-child { border-bottom: none; }
+  .stop-time {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #aaa;
+    font-weight: 500;
+    padding-top: 3px;
+    white-space: nowrap;
+  }
+  .stop-name {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #1a1a18;
+    margin-bottom: 0.4rem;
+  }
+  .stop-desc {
+    font-size: 0.88rem;
+    color: #555;
+    line-height: 1.7;
+    font-weight: 300;
+    margin-bottom: 0.6rem;
+  }
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 0.5rem; }
+  .tag {
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+  .tag-gold   { color: #8a5c1a; background: #fdf4e7; border-color: #e8c97a; }
+  .tag-green  { color: #2a6340; background: #edf7f1; border-color: #86c9a2; }
+  .tag-blue   { color: #1a3d6a; background: #eaf2fb; border-color: #8ab8e8; }
+  .tag-rose   { color: #7a2240; background: #fceef4; border-color: #e8a0be; }
+  .tag-gray   { color: #555; background: #f5f5f3; border-color: #d0cfc8; }
+  .tag-red    { color: #7a1a1a; background: #fdf0f0; border-color: #e89090; }
+  .tag-purple { color: #4a2a7a; background: #f3effe; border-color: #b89ee8; }
+
+  .stop-img-small {
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-top: 0.75rem;
+  }
+  .note {
+    background: #fffbf3;
+    border-left: 3px solid #e8c97a;
+    border-radius: 0 6px 6px 0;
+    padding: 0.9rem 1.1rem;
+    font-size: 0.83rem;
+    color: #7a5c20;
+    line-height: 1.6;
+    margin-top: 0.75rem;
+  }
+  .note strong { font-weight: 500; }
+
+  .option-switcher {
+    display: flex;
+    gap: 0;
+    border: 1px solid #ebebea;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+  .opt-btn {
+    flex: 1;
+    padding: 0.85rem 1rem;
+    font-size: 0.82rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    background: #f7f6f3;
+    color: #aaa;
+    transition: background 0.15s, color 0.15s;
+  }
+  .opt-btn:first-child { border-right: 1px solid #ebebea; }
+  .opt-btn.active { background: #fff; color: #1a1a18; }
+  .opt-btn span {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: #c0392b;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+    font-weight: 400;
+  }
+
+  .option-content { display: none; }
+  .option-content.active { display: block; }
+
+  .budget-box {
+    margin-top: 3rem;
+    border: 1px solid #ebebea;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .budget-title {
+    background: #f7f6f3;
+    padding: 0.9rem 1.25rem;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #888;
+    font-weight: 500;
+    border-bottom: 1px solid #ebebea;
+  }
+  .budget-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.65rem 1.25rem;
+    font-size: 0.88rem;
+    border-bottom: 1px solid #f0efec;
+  }
+  .budget-row:last-child { border-bottom: none; }
+  .budget-row span { color: #555; }
+  .budget-row strong { color: #1a1a18; font-weight: 500; }
+  .budget-total {
+    background: #f7f6f3;
+    padding: 0.8rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-top: 1px solid #ebebea;
+  }
+
+  .footer {
+    border-top: 1px solid #ebebea;
+    padding: 3rem 2rem;
+    text-align: center;
+    max-width: 780px;
+    margin: 0 auto;
+  }
+  .footer p { font-size: 0.82rem; color: #aaa; line-height: 1.6; }
+  .footer em { font-style: italic; font-family: 'Playfair Display', Georgia, serif; font-size: 0.9rem; color: #888; }
+
+  .img-gallery {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
+  .img-gallery img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+
+  @media (max-width: 520px) {
+    .stop { grid-template-columns: 60px 1fr; gap: 0 1rem; }
+    .day { padding: 2rem 1.25rem 4rem; }
+    .hero { padding: 50px 1.25rem 40px; }
+    .day-img { height: 220px; }
+    .quick-facts { gap: 1rem; }
+    .img-gallery { grid-template-columns: 1fr; }
+    .img-gallery img { height: 180px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <p class="hero-eyebrow">4 días · Agosto · Campania · 3 personas</p>
+  <h1 class="hero-title">Nápoles<br><em>a boccanera</em></h1>
+  <p class="hero-desc">
+    Un viaje pensado para Elena, Isa y Kevin. Pizza en su ciudad de origen, caos con carisma,
+    el mar más azul del Mediterráneo, vestigios romanos y, si el universo sigue colaborando,
+    el marido italiano de Isa esperando en alguna pizzería del Quartieri Spagnoli.
+  </p>
+
+  <div class="personas">
+    <div class="persona">
+      <div class="persona-name">Elena</div>
+      <div class="persona-from">Sale desde Motril</div>
+      <div class="persona-vibe">Quiere ver cosas bonitas que quiten el aliento</div>
+    </div>
+    <div class="persona">
+      <div class="persona-name">Isa</div>
+      <div class="persona-from">Sale desde Baza</div>
+      <div class="persona-vibe">La búsqueda del marido italiano continúa. Nápoles tiene carácter</div>
+    </div>
+    <div class="persona">
+      <div class="persona-name">Kevin</div>
+      <div class="persona-from">Sale desde Madrid</div>
+      <div class="persona-vibe">Fan de la buena comida y los paseos tranquilos. Aquí come bien</div>
+    </div>
+  </div>
+
+  <div class="quick-facts">
+    <div class="fact"><strong>Alojamiento</strong>Centro Storico o Chiaia</div>
+    <div class="fact"><strong>Transporte</strong>Metro, funicular y pies</div>
+    <div class="fact"><strong>Presupuesto</strong>~55–80 € / día / persona</div>
+    <div class="fact"><strong>Excursión</strong>Pompeya o Costa Amalfitana (día 3)</div>
+  </div>
+</header>
+
+<!-- NAVEGACIÓN -->
+<nav class="nav-days">
+  <button class="nav-btn active" onclick="showDay(1)">Día 1 · Llegada</button>
+  <button class="nav-btn" onclick="showDay(2)">Día 2 · La ciudad</button>
+  <button class="nav-btn" onclick="showDay(3)">Día 3 · Excursión</button>
+  <button class="nav-btn" onclick="showDay(4)">Día 4 · Despedida</button>
+</nav>
+
+<!-- ═══════════ DÍA 1 ═══════════ -->
+<section class="day active" id="day-1">
+  <div class="day-header">
+    <p class="day-num">Día 1</p>
+    <h2 class="day-title">Llegada y bautismo de fuego napolitano</h2>
+    <p class="day-summary">
+      Nápoles no se presenta suavemente. Desde que salís del aeropuerto ya estáis dentro.
+      El primer día es para dejarse absorber, comer pizza y entender que el caos aquí tiene su propia lógica.
+    </p>
+  </div>
+
+  <img class="day-img"
+    src="img/Vista del golfo de Nápoles con el Vesubio al fondo.webp"
+    alt="Vista del golfo de Nápoles con el Vesubio al fondo">
+
+  <div class="stops">
+
+    <div class="stop">
+      <div class="stop-time">Llegada</div>
+      <div class="stop-content">
+        <h3 class="stop-name">Cómo llegan los tres</h3>
+        <p class="stop-desc">
+          <strong>Kevin</strong> vuela desde Madrid. <strong>Elena e Isa</strong> pueden volar desde Málaga con escala, o quedar con Kevin en Madrid para volar juntos. El aeropuerto de Capodichino está a 7 km del centro.
+        </p>
+        <div class="tags">
+          <span class="tag tag-blue">Alibus: 5 € · 20 min</span>
+          <span class="tag tag-green">Baja en Piazza Garibaldi</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="stop-time">Mediodía</div>
+      <div class="stop-content">
+        <h3 class="stop-name">Primera pizza. La primera de verdad</h3>
+        <p class="stop-desc">
+          Nápoles inventó la pizza margherita. En <strong>L'Antica Pizzeria da Michele</strong> solo hay dos variedades: marinara y margherita. Sin rúcula, sin trufa, sin pretensiones. Kevin: la mejor pizza de su vida. Elena: la más fotogénica del planeta. Isa: los pizzaioli son otra categoría.
+        </p>
+        <div class="img-gallery">
+          <img src="img/Pizza napolitana margherita auténtica.jpg" alt="Pizza napolitana margherita auténtica">
+        </div>
+        <div class="tags">
+          <span class="tag tag-gold">Pizza: 5–7 €</span>
+          <span class="tag tag-red">Desde 1870. Sin variaciones</span>
+          <span class="tag tag-rose">Isa: pizzaioli con tatuajes</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="stop-time">Tarde</div>
+      <div class="stop-content">
+        <h3 class="stop-name">Spaccanapoli — la calle que parte la ciudad</h3>
+        <p class="stop-desc">
+          Una línea recta de 2 km que divide Nápoles desde época griega. Iglesias barrocas, tiendas de presepi (belenes artesanales), pastelerías con sfogliatella caliente. Elena: arquitectura detrás de cada esquina. Kevin: el paseo con más textura del sur de Italia. Isa: aquí vive el Nápoles de película.
+        </p>
+        <div class="img-gallery">
+          <img src="img/Spaccanapoli calle histórica Nápoles.jpg" alt="Spaccanapoli calle histórica Nápoles">
+          <img src="img/Iglesia barroca Nápoles.jpg" alt="Iglesia barroca Nápoles">
+        </div>
+        <div class="tags">
+          <span class="tag tag-green">2 km a pie · Todo plano</span>
+          <span class="tag tag-gold">Sfogliatella: 1.50 €</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="stop-time">Noche</div>
+      <div class="stop-content">
+        <h3 class="stop-name">Piazza Bellini + primer aperitivo</h3>
+        <p class="stop-desc">
+          La plaza más animada del Centro Storico al atardecer. Terrazas sobre ruinas griegas del siglo V a.C., estudiantes, artistas y un ambiente que no existirá en ninguna otra ciudad. Spritz con limones del Vesubio.
+        </p>
+        <div class="img-gallery">
+          <img src="img/Piazza nocturna Nápoles.jpg" alt="Piazza nocturna Nápoles">
+        </div>
+        <div class="tags">
+          <span class="tag tag-gold">Spritz: 5–6 €</span>
+          <span class="tag tag-rose">Isa: la plaza con más vida de Italia</span>
+          <span class="tag tag-green">Ruinas griegas debajo de los pies</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════ DÍA 2 ═══════════ -->
+<section class="day" id="day-2">
+  <div class="day-header">
+    <p class="day-num">Día 2</p>
+    <h2 class="day-title">Museos, castillos y el golfo más bonito del mundo</h2>
+    <p class="day-summary">
+      El día para entender Nápoles en profundidad: lo que está bajo tierra, lo que domina la bahía
+      y la vista que nadie olvida desde el Castel Sant'Elmo.
+    </p>
+  </div>
+
+  <img class="day-img"
+    src="img/Castel dell'Ovo y golfo de Nápoles.jpg"
+    alt="Castel dell'Ovo y golfo de Nápoles">
+
+  <div class="stops">
+
+    <div class="stop">
+      <div class="stop-time">9:00</div>
+      <div class="stop-content">
+        <h3 class="stop-name">Museo Arqueológico Nacional</h3>
+        <p class="stop-desc">
+          La mejor colección de arte romano del mundo, incluyendo los frescos y mosaicos sacados de Pompeya. Elena: la <em>Batalla de Issos</em> de Alejandro Magno en mosaico de 3 millones de teselas. Kevin: entrar antes del calor. Podéis saltaros Pompeya entera si véis esto primero.
+        </p>
+        <div class="img-gallery">
+          <img src="img/Museo Arqueológico Nacional Nápoles.jpg" alt="Museo Arqueológico Nacional Nápoles">
+          <img src="img/Mosaico romano antiguo.jpg" alt="Mosaico romano antiguo">
+        </div>
+        <div class="tags">
+          <span class="tag tag-gold">Entrada: 15 €</span>
+          <span class="tag tag-green">Fresco y sin colas a las 9:00</span>
+          <span class="tag tag-blue">Reserva recomendada online</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="stop-time">12:30</div>
+      <div class="stop-content">
+        <h3 class="stop-name">Quartieri Spagnoli + almuerzo</h3>
+        <p class="stop-desc">
+          El barrio más denso y característico de Nápoles. Ropa tendida entre balcones, altares callejeros, scooters que rozan las paredes. Almuerzo en una trattoria de barrio: pasta e fagioli o ragù alla napoletana que lleva ocho horas en el fuego.
+        </p>
+        <div class="img-gallery">
+          <img src="img/Calle estrecha Quartieri Spagnoli.jpg" alt="Calle estrecha Quartieri Spagnoli">
+          <img src="img/Pasta ragù napolitano.jpg" alt="Pasta ragù napolitano">
+        </div>
+        <div class="tags">
+          <span class="tag tag-gold">Almuerzo: 10–14 €</span>
+          <span class="tag tag-rose">Isa: zona de alta concentración local</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="stop-time">15:00</div>
+      <div class="stop-content">
+        <h3 class="stop-name">Funicular + Castel Sant'Elmo</h3>
+        <p class="stop-desc">
+          Subid en funicular desde Piazza Fuga hasta Vomero. El castillo estrella domina todo el golfo de Nápoles: el Vesubio, las islas de Capri e Ischia, el puerto y la ciudad entera. Elena: esta es la foto del viaje. Kevin: brisa garantizada en altura.
+        </p>
+        <div class="img-gallery">
+          <img src="img/Vista panorámica golfo de Nápoles.jpg" alt="Vista panorámica golfo de Nápoles">
+          <img src="img/Castel Sant'Elmo Nápoles.jpg" alt="Castel Sant'Elmo Nápoles">
+        </div>
+        <div class="tags">
+          <span class="tag tag-gold">Funicular: 1.10 €</span>
+          <span class="tag tag-gold">Castillo: 5 €</span>
+          <span class="tag tag-rose">Elena: foto obligatoria aquí</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="stop-time">18:00</div>
+      <div class="stop-content">
+        <h3 class="stop-name">Paseo del Lungomare + Castel dell'Ovo</h3>
+        <p class="stop-desc">
+          El paseo marítimo más bonito de Italia al atardecer. El castillo del Huevo sobre el mar, yates blancos y el Vesubio de fondo. Termina con gelato de limone di Sorrento en cualquier barra del lungomare.
+        </p>
+        <div class="img-gallery">
+          <img src="img/Paseo marítimo Nápoles atardecer.webp" alt="Paseo marítimo Nápoles atardecer">
+        </div>
+        <div class="tags">
+          <span class="tag tag-green">Gratis · Sin entrada</span>
+          <span class="tag tag-gold">Gelato: 2–3 €</span>
+          <span class="tag tag-rose">Atardecer sobre el Vesubio</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════ DÍA 3 ═══════════ -->
+<section class="day" id="day-3">
+  <div class="day-header">
+    <p class="day-num">Día 3 · Excursión</p>
+    <h2 class="day-title">Un día fuera de Nápoles</h2>
+    <p class="day-summary">
+      Las dos opciones son increíbles y están a menos de 1 hora. Una os lleva 2.000 años atrás.
+      La otra os pone delante del mar más bonito de Europa.
+    </p>
+  </div>
+
+  <!-- SELECTOR -->
+  <div class="option-switcher">
+    <button class="opt-btn active" onclick="showOption('pompeya')">
+      <span>Opción A</span>
+      Pompeya — ciudad romana
+    </button>
+    <button class="opt-btn" onclick="showOption('amalfi')">
+      <span>Opción B</span>
+      Costa Amalfitana
+    </button>
+  </div>
+
+  <!-- OPCIÓN A: POMPEYA -->
+  <div class="option-content active" id="opt-pompeya">
+
+    <img class="day-img"
+      src="img/Ruinas de Pompeya con el Vesubio al fondo.jpg"
+      alt="Ruinas de Pompeya con el Vesubio al fondo">
+
+    <div class="stops">
+
+      <div class="stop">
+        <div class="stop-time">8:00</div>
+        <div class="stop-content">
+          <h3 class="stop-name">Tren Circumvesuviana a Pompeya</h3>
+          <p class="stop-desc">
+            Desde Napoli Centrale (o Garibaldi) hasta Pompei Scavi – Villa dei Misteri. 40 minutos de tren con vistas al Vesubio. La línea pasa por todo el sur del volcán.
+          </p>
+          <div class="tags">
+            <span class="tag tag-gold">3.20 € ida</span>
+            <span class="tag tag-green">Salid antes de las 8:30 para evitar el calor</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="stop-time">9:00</div>
+        <div class="stop-content">
+          <h3 class="stop-name">Pompeya — la ciudad detenida en el año 79</h3>
+          <p class="stop-desc">
+            Una ciudad romana entera conservada bajo las cenizas del Vesubio. Calles adoquinadas, casas con frescos originales, panaderías con molinos de piedra, bares con el mostrador intacto. Elena: los frescos de la Villa de los Misterios son impresionantes. Kevin: la ciudad más bien conservada que verás en tu vida. Calculad 3–4 horas sin prisa.
+          </p>
+          <div class="img-gallery">
+            <img src="img/Calle principal Pompeya ruinas.jpg" alt="Calle principal Pompeya ruinas">
+            <img src="img/Foro de Pompeya con Vesubio.jpg" alt="Foro de Pompeya con Vesubio">
+          </div>
+          <div class="tags">
+            <span class="tag tag-gold">Entrada: 16 €</span>
+            <span class="tag tag-blue">Reserva online obligatoria en agosto</span>
+            <span class="tag tag-rose">Elena: Villa de los Misterios</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="stop-time">13:00</div>
+        <div class="stop-content">
+          <h3 class="stop-name">Almuerzo en el pueblo de Pompeya</h3>
+          <p class="stop-desc">
+            A 5 minutos a pie del yacimiento, el precio cae a la mitad y la comida sabe mejor. Kevin: pizza al taglio con bufala campana. Isa: el camarero del bar de la esquina lleva el delantal con carácter.
+          </p>
+          <!-- <img class="stop-img-small"
+            src="https://images.unsplash.com/photo-1551892374-ecf8754cf8b0?w=800&q=80"
+            alt="Pizza al taglio con mozzarella"> -->
+          <div class="tags">
+            <span class="tag tag-gold">Pizza + bebida: 8–10 €</span>
+            <span class="tag tag-green">Lejos de las colas del yacimiento</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="stop-time">15:30</div>
+        <div class="stop-content">
+          <h3 class="stop-name">De vuelta a Nápoles + Ercolano (opcional)</h3>
+          <p class="stop-desc">
+            Si os quedan energías, parad 45 minutos en Ercolano (dos paradas antes en el tren): otra ciudad romana, más pequeña y mejor conservada que Pompeya, con dos pisos de edificios en pie. Si no, directos a Nápoles a tomar un granita de caffè en el bar más fresco que encontréis.
+          </p>
+          <div class="img-gallery">
+            <img src="img/Ruinas de Herculano.jpg" alt="Ruinas de Herculano">
+          </div>
+          <div class="tags">
+            <span class="tag tag-gold">Ercolano: 11 € (opcional)</span>
+            <span class="tag tag-green">En Nápoles a las 17:30</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- OPCIÓN B: COSTA AMALFITANA -->
+  <div class="option-content" id="opt-amalfi">
+
+    <img class="day-img"
+      src="img/Costa Amalfitana acantilados y pueblo sobre el mar.webp"
+      alt="Costa Amalfitana acantilados y pueblo sobre el mar">
+
+    <div class="stops">
+
+      <div class="stop">
+        <div class="stop-time">7:30</div>
+        <div class="stop-content">
+          <h3 class="stop-name">Ferry desde Molo Beverello a Positano</h3>
+          <p class="stop-desc">
+            Salid temprano: el ferry desde el puerto de Nápoles llega a Positano en 1 hora y 20 minutos. Ir por el mar es la forma correcta de llegar: la costa os recibe de frente.
+          </p>
+          <!-- <div class="img-gallery">
+            <img src="img/Ferry desde Nápoles.jpg" alt="Ferry desde Nápoles">
+            <img src="img/Vista de la costa desde el ferry.jpg" alt="Vista de la costa desde el ferry">
+          </div> -->
+          <div class="tags">
+            <span class="tag tag-gold">Ferry: 18–22 € ida</span>
+            <span class="tag tag-blue">Comprad billete el día antes</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="stop-time">9:30</div>
+        <div class="stop-content">
+          <h3 class="stop-name">Positano — el pueblo más fotogénico de Italia</h3>
+          <p class="stop-desc">
+            Casas de colores encajonadas en el acantilado, callejones con buganvillas, barcas de madera en la playa de guijarros. Elena: este lugar es el que vienes a Italia a ver. Kevin: las escaleras son muchas, pero la recompensa es absoluta. Isa: mención especial al señor del kiosco de limoncello junto al mar.
+          </p>
+          <div class="img-gallery">
+            <img src="img/Positano pueblo colorido acantilado.jpg" alt="Positano pueblo colorido acantilado">
+            <img src="img/Playa de Positano Costa Amalfitana.jpeg" alt="Playa de Positano Costa Amalfitana">
+          </div>
+          <div class="tags">
+            <span class="tag tag-rose">Elena: foto del viaje, aquí</span>
+            <span class="tag tag-green">Playa: sin entrada</span>
+            <span class="tag tag-gold">Limoncello: 2–3 €</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="stop-time">13:00</div>
+        <div class="stop-content">
+          <h3 class="stop-name">Almuerzo con vistas al mar</h3>
+          <p class="stop-desc">
+            Subid dos calles por encima del puerto y el precio cae a la mitad. Bruschetta con tomate local, spaghetti alle vongole y vino blanco de la zona. Kevin: la pasta con almejas más fresca que existe.
+          </p>
+          <img class="stop-img-small"
+            src="img/Spaghetti alle vongole con vista al mar.webp"
+            alt="Spaghetti alle vongole con vista al mar">
+          <div class="tags">
+            <span class="tag tag-gold">Menú: 18–25 €</span>
+            <span class="tag tag-rose">La mesa con vistas vale el precio</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="stop-time">15:00</div>
+        <div class="stop-content">
+          <h3 class="stop-name">Bus a Ravello — el mirador sobre el abismo</h3>
+          <p class="stop-desc">
+            Bus público desde Amalfi a Ravello (15 min): el pueblo más alto de la costa, a 365 metros sobre el mar. Los Jardines de Villa Rufolo tienen una vista que Wagner usó de inspiración para el Parsifal. Elena: esto no tiene explicación posible, hay que verlo.
+          </p>
+          <div class="img-gallery">
+            <img src="img/Vista desde Ravello Costa Amalfitana.jpg" alt="Vista desde Ravello Costa Amalfitana">
+            <img src="img/Jardines Villa Rufolo Ravello.jpg" alt="Jardines Villa Rufolo Ravello">
+          </div>
+          <div class="tags">
+            <span class="tag tag-gold">Bus: 1.30 €</span>
+            <span class="tag tag-gold">Villa Rufolo: 7 €</span>
+            <span class="tag tag-rose">Elena: este es el lugar</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="stop-time">18:00</div>
+        <div class="stop-content">
+          <h3 class="stop-name">Ferry de vuelta a Nápoles</h3>
+          <p class="stop-desc">
+            De vuelta con la costa bañada por la luz de la tarde. En Nápoles a las 19:30, con hambre y muchas fotos. Cena rápida de pizza o fritto misto en el puerto antes de dormir.
+          </p>
+          <!-- <img class="stop-img-small"
+            src="img/Costa Amalfitana al atardecer desde el ferry.jpg"
+            alt="Costa Amalfitana al atardecer desde el ferry"> -->
+          <div class="tags">
+            <span class="tag tag-blue">Ferry vuelta: 18–22 €</span>
+            <span class="tag tag-green">En Nápoles a las 19:30</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</section>
+
+<!-- ═══════════ DÍA 4 ═══════════ -->
+<section class="day" id="day-4">
+  <div class="day-header">
+    <p class="day-num">Día 4</p>
+    <h2 class="day-title">El último día siempre sabe mejor</h2>
+    <p class="day-summary">
+      Sin agenda fija. Los sitios que quedaron pendientes, el barrio que queréis volver a ver
+      y la pizza de despedida que comeréis pensando en cuándo volvéis.
+    </p>
+  </div>
+
+  <img class="day-img"
+    src="img/Golfo de Nápoles al amanecer dorado.jpg"
+    alt="Golfo de Nápoles al amanecer dorado">
+
+  <div class="stops">
+
+    <div class="stop">
+      <div class="stop-time">9:00</div>
+      <div class="stop-content">
+        <h3 class="stop-name">Caffè e sfogliatella en el bar de siempre</h3>
+        <p class="stop-desc">
+          Espresso de pie en la barra (1 €) y sfogliatella riccia caliente de la Pasticceria Attanasio, a cien metros de la estación. Kevin: la mejor relación precio-placer del viaje. Elena: la foto del desayuno napolitano. Isa: el señor de la barra lleva décadas y tiene historias.
+        </p>
+        <div class="img-gallery">
+          <img src="img/Sfogliatella napolitana pastelería.jpg" alt="Sfogliatella napolitana pastelería">
+        </div>
+        <div class="tags">
+          <span class="tag tag-gold">Café + sfogliatella: 2.50 €</span>
+          <span class="tag tag-green">Desayuno de campeones</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="stop-time">10:00</div>
+      <div class="stop-content">
+        <h3 class="stop-name">Napoli Sotterranea — la ciudad subterránea</h3>
+        <p class="stop-desc">
+          40 metros bajo tierra, una red de túneles griegos y romanos excavados en el tufo volcánico. En agosto, bajan 15 grados. Elena: los acueductos romanos originales del siglo III a.C. Kevin: la excursión más fresca del viaje. Isa: el guía siempre tiene carácter napolitano.
+        </p>
+        <div class="img-gallery">
+          <img src="img/Galería subterránea napolitana.jpg" alt="Galería subterránea napolitana">
+          <img src="img/Túneles romanos bajo Nápoles.jpeg" alt="Túneles romanos bajo Nápoles">
+        </div>
+        <div class="tags">
+          <span class="tag tag-gold">Entrada: 10 €</span>
+          <span class="tag tag-green">15°C menos que en la calle</span>
+          <span class="tag tag-blue">Visita guiada incluida</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="stop-time">13:00</div>
+      <div class="stop-content">
+        <h3 class="stop-name">Última pizza. La pizza de despedida</h3>
+        <p class="stop-desc">
+          En <strong>Sorbillo</strong>, en la Via dei Tribunali, la pizzería con más historia del barrio. Cola en la calle, pero avanza rápido. Kevin: elige la pizza con friarelli y salsiccia. Elena: la más clásica margherita con búfala. Isa: sea la que sea, va a estar mejor que las de vuelta a España.
+        </p>
+        <!-- <div class="img-gallery">
+          <!-- <img src="img/Pizza napolitana con búfala.jpg" alt="Pizza napolitana con búfala">
+          <img src="img/Pizzería Sorbillo Nápoles.jpg" alt="Pizzería Sorbillo Nápoles"> -->
+        </div> -->
+        <div class="tags">
+          <span class="tag tag-gold">Pizza: 6–9 €</span>
+          <span class="tag tag-red">La más famosa de la Via dei Tribunali</span>
+          <span class="tag tag-rose">Isa: el pizzaiolo merece un aplauso</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="stop-time">16:00</div>
+      <div class="stop-content">
+        <h3 class="stop-name">Mercato di Porta Nolana — recuerdos de verdad</h3>
+        <p class="stop-desc">
+          El mercado más auténtico de Nápoles: pescado fresco, limones del Vesubio, especias, limoncello artesanal. Elena: bolsas de limones para llevar. Kevin: el mejor caos organizado que habrás visto. Isa: conversación garantizada con cualquier puesto.
+        </p>
+        <div class="img-gallery">
+          <img src="img/Mercado napolitano limones.jpg" alt="Mercado napolitano limones">
+        </div>
+        <div class="tags">
+          <span class="tag tag-gold">Limoncello: souvenir perfecto</span>
+          <span class="tag tag-green">El mercado más vivo de la ciudad</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="stop-time">Cierre</div>
+      <div class="stop-content">
+        <h3 class="stop-name">Última vista al golfo desde el Lungomare</h3>
+        <p class="stop-desc">
+          El Vesubio al fondo, el Castel dell'Ovo sobre el agua, los ferris que entran al puerto. La luz de la tarde en Nápoles es completamente distinta a cualquier otra ciudad. Elena: la última foto del viaje. Kevin: gratis y con helado de limón en la mano. Isa: el atardecer sobre el golfo tiene su propio carácter.
+        </p>
+        <div class="img-gallery">
+          <img src="img/Golfo de Nápoles atardecer Vesubio.jpg" alt="Golfo de Nápoles atardecer Vesubio">
+          <img src="img/Gelato de limón junto al mar.jpg" alt="Gelato de limón junto al mar">
+        </div>
+        <div class="tags">
+          <span class="tag tag-green">Gratis</span>
+          <span class="tag tag-rose">La foto del viaje. De verdad esta vez</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PRESUPUESTO -->
+  <div class="budget-box">
+    <div class="budget-title">Presupuesto orientativo por persona — 4 días</div>
+    <div class="budget-row"><span>Vuelos ida y vuelta</span><strong>60–120 €</strong></div>
+    <div class="budget-row"><span>Alojamiento (3 noches)</span><strong>75–110 €</strong></div>
+    <div class="budget-row"><span>Comidas y pizzas</span><strong>90–130 €</strong></div>
+    <div class="budget-row"><span>Transporte local (metro, funicular, bus)</span><strong>15–25 €</strong></div>
+    <div class="budget-row"><span>Excursión día 3 (ferry o tren incluido)</span><strong>20–45 €</strong></div>
+    <div class="budget-row"><span>Entradas (museos, castillo, Sotterranea)</span><strong>25–35 €</strong></div>
+    <div class="budget-row"><span>Helados, aperitivos y sfogliatelle</span><strong>25–35 €</strong></div>
+    <div class="budget-total">
+      <span>Total estimado por persona</span>
+      <strong>310–500 €</strong>
+    </div>
+  </div>
+
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p><em>"Vedi Napoli e poi muori"</em></p>
+  <p style="margin-top:0.75rem">
+    Elena, Isa, Kevin — que lo disfrutéis mucho.<br>
+    Y Isa: los napolitanos tienen más carácter que los florentinos. Las probabilidades siguen de tu lado.
+  </p>
+</footer>
+
+<script>
+  function showDay(n) {
+    document.querySelectorAll('.day').forEach(d => d.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('day-' + n).classList.add('active');
+    document.querySelectorAll('.nav-btn')[n - 1].classList.add('active');
+    window.scrollTo({ top: document.querySelector('.nav-days').offsetTop - 10, behavior: 'smooth' });
+  }
+
+  function showOption(opt) {
+    document.querySelectorAll('.option-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('opt-' + opt).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+</script>
+</body>
+</html>
